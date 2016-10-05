@@ -1,5 +1,6 @@
 from noh.component import Component
 
+
 class Collection(object):
     keys = []
     values = []
@@ -49,14 +50,14 @@ class Collection(object):
     def __iter__(self):
         return iter(self.keys)
 
-    def __getslice__(self, i, j):
-        raise NotImplementedError("To be implemented")
+    # def __getslice__(self, i, j):
+    #     raise NotImplementedError("To be implemented")
 
-    def __setslice__(self, i, j, values):
-        raise NotImplementedError("To be implemented")
+    # def __setslice__(self, i, j, values):
+    #     raise NotImplementedError("To be implemented")
 
-    def __delslice__(self, i, j):
-        raise NotImplementedError("To be implemented")
+    # def __delslice__(self, i, j):
+    #     raise NotImplementedError("To be implemented")
 
     def __getattr__(self, key):
         return self.__getitem__(key)
@@ -71,55 +72,34 @@ class PropRule(Collection):
         raise NotImplementedError("`__call__` must be explicitly overridden")
 
 
-class TrainRule(Collection):
-    def __init__(self, components):
-        super(TrainRule, self).__init__(components)
-        self.components = components
-
-    def __call__(self, data, label, epoch):
-        raise NotImplementedError("`__call__` must be explicitly overridden")
-
-
-class Planner(object):
-    def __init__(self, components, rule_dict={}, default_prop=None, default_train=None):
+class Circuit(Collection, Component):
+    def __init__(self, components, RuleClassDict, default_prop_name=None, default_train_name=None):
+        super(Circuit, self).__init__(components)
         self.components = components
         self.rules = {}
-        if default_prop is not None:
-            self.rules["prop"] = default_prop(components)
-            self.prop_rule = self.rules['prop']
-        if default_train is not None:
-            self.rules["train"] = default_train(components)
-            self.train_rule = self.rules['train']
+        self.default_prop = None
+        self.default_train = None
 
-        for name in rule_dict:
-            Rule = rule_dict[name]
-            self.rules[name] = Rule(components)
+        for name in RuleClassDict:
+            RuleClass = RuleClassDict[name]
+            self.rules[name] = RuleClass(components)
 
-    def set_prop(self, name):
-        self.prop_rule = self.rules[name]
-
-    def set_train(self, name):
-        self.train_rule = self.rules[name]
-
-    def __call__(self, data):
-        return self.prop_rule(data)
-
-    def train(self, data, label, epoch):
-        return self.train_rule(data, label, epoch)
-
-
-class Circuit(Collection, Component):
-    def __init__(self, PlannerClass, components, rule_dict,
-                 default_prop=None, default_train=None):
-        super(Circuit, self).__init__(components)
-        self.planner = PlannerClass(components, rule_dict,
-                                    default_prop, default_train)
+        if default_prop_name is not None:
+            self.set_default_prop(default_prop_name)
+        if default_train_name is not None:
+            self.set_default_train(default_train_name)
 
     def __call__(self, data, **kwargs):
-        return self.planner(data)
+        return self.default_prop(data)
 
     def train(self, data, label, epochs):
-        return self.planner.train(data, label, epochs)
+        return self.default_train(data, label, epochs)
+
+    def set_default_prop(self, name):
+        self.default_prop = self.rules[name]
+
+    def set_default_train(self, name):
+        self.default_train = self.rules[name]
 
     def __getattr__(self, key):
-        return self.planner.rules[key]
+        return self.rules[key]
