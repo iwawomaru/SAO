@@ -39,3 +39,10 @@ Circuitをインスタンス化する場合には3種類の方法がある。
 
 ## Circuit
 
+## TODO:
+
+1. PropLearnerを賢くする
+2. 標準的な学習機を、現在のNohに合わせて記述する
+3. Noh-Gazebo連携
+
+
