@@ -67,8 +67,15 @@ class PropLearner(PropRule):
             self.components["learner_set"].f_go = True
             self.components["learner_set"].set_default_prop(name=self.prop)
 
+        action_dict = {}
+        for n in self.name_list:
+            self.components["learner_set"].set_default_prop(name=n)
+            action_dict[n] = self.components["learner_set"](data)
+        self.components["learner_set"].set_default_prop(name=self.prop)
+            
         self.evidence += self.sample_normal(self.prop)
-        res = self.components["learner_set"](data)
+        #res = self.components["learner_set"](data)
+        res = action_dict[self.prop]
 
         """ kashikoku shitai here """
         if self.evidence > self.threshold:
