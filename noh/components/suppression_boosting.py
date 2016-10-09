@@ -32,8 +32,12 @@ class LearnerSet(Circuit):
         self.f_go = False
 
     @classmethod
-    def create(cls, n_stat, n_act, n_learner):
-        component_list = [DQN(n_output=n_act)] + \
+    def create(cls, n_stat, n_act, n_learner, dqn=True):
+        if dqn:
+            dqn = DQN(n_output=n_act)
+        else:
+            dqn = Random(n_input=n_stat, n_output=n_act)
+        component_list = [dqn] + \
                          [Const(n_input=n_stat, n_output=n_act, const_output=n) for n in xrange(1, n_learner)] 
         PropRulesDict = {"prop"+str(i): SimpleProp for i in xrange(n_learner)}
         return LearnerSet(component_list, PropRulesDict)
