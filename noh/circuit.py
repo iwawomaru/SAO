@@ -103,3 +103,9 @@ class Circuit(Collection, Component):
 
     def __getattr__(self, key):
         return self.rules[key]
+
+    def set_reward(self, reward):
+        print self.components
+        for c in self.components:
+            if c is not None:
+                c.set_reward(reward)
