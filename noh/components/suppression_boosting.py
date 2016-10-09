@@ -131,11 +131,11 @@ class GALearner(PropRule):
     def alternate(self):
         print "call alternate"
         # selection
-        n_drop_gene = len(self.reward_sum_history) / 2 + 1
+        n_survive_gene = len(self.reward_sum_history) / 2 + 1
         new_genes = []
         sorted_reward = sorted(self.reward_sum_history)
-        for i in xrange(n_drop_gene):
-            idx = self.reward_sum_history.index(sorted_reward.pop(i))
+        for sr in sorted_reward[:n_survive_gene]:
+            idx = self.reward_sum_history.index(sr)
             new_genes.append(self.genes[idx])
 
         # crossing
