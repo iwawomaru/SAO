@@ -106,7 +106,7 @@ class GALearner(PropRule):
         self.evidence = 0.
         self.eps = 0
         #self.genes = [{name: {'sigma':np.random.rand(), 'mu':np.random.rand()} for name in self.name_list} for i in xrange(self.n_gene)]
-        self.genes = [{name: {'sigma':0.1, 'mu':np.random.rand()} for name in self.name_list} for i in xrange(self.n_gene)]
+        self.genes = [{name: {'sigma':0.0001, 'mu':0.001*np.random.rand()} for name in self.name_list} for i in xrange(self.n_gene)]
 
     def __call__(self, data):
         if not self.components["learner_set"].f_go:
