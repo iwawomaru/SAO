@@ -96,7 +96,7 @@ class GALearner(PropRule):
     name_list = []
     n_gene = 5
     eps_period = 5
-    mutation_rate = 0.1
+    mutation_rate = 0.05
     threshold = 1.
     def __init__(self, components):
         super(GALearner, self).__init__(components)
@@ -105,7 +105,8 @@ class GALearner(PropRule):
         self.reward_sum_history = []
         self.evidence = 0.
         self.eps = 0
-        self.genes = [{name: {'sigma':np.random.rand(), 'mu':np.random.rand()} for name in self.name_list} for i in xrange(self.n_gene)]
+        #self.genes = [{name: {'sigma':np.random.rand(), 'mu':np.random.rand()} for name in self.name_list} for i in xrange(self.n_gene)]
+        self.genes = [{name: {'sigma':0.1, 'mu':np.random.rand()} for name in self.name_list} for i in xrange(self.n_gene)]
 
     def __call__(self, data):
         if not self.components["learner_set"].f_go:
@@ -138,17 +139,21 @@ class GALearner(PropRule):
             idx = self.reward_sum_history.index(sr)
             new_genes.append(self.genes[idx])
 
+        # keep Top-1 gene
+        self.genes[0] = new_genes[0]
+
         # crossing
-        for i in xrange(self.n_gene):
+        for i in xrange(1, self.n_gene):
             u = np.random.choice(new_genes)
             v = np.random.choice(new_genes)
+            self.genes[i] = u
             for n in self.name_list:
-                g = np.random.choice([u, v])
-                self.genes[i][n] = g[n]
+                cr = np.random.rand()
+                self.genes[i][n]['mu'] = cr*self.genes[i][n]['mu'] + (1-cr)*v[n]['mu']
+
                 # mutation
-                for k in g[n].keys():
-                    if np.random.rand() < self.mutation_rate:
-                        self.genes[i][n][k] += self.genes[i][n][k] * (np.random.rand()-0.5)
+                if np.random.rand() < self.mutation_rate:
+                    self.genes[i][n]['mu'] += self.genes[i][n]['mu'] * (np.random.rand()-0.5)
 
     def set_reward(self, reward):
         #print "called GALearner's set_reward"
