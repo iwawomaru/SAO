@@ -2,7 +2,7 @@
 
 Shimada, Ashihara and Osawa Project
 
-https://github.com/iwawomaru/SAO/blob/master/osawa-abst.png
+![](https://github.com/iwawomaru/SAO/blob/master/osawa-abst.png)
 
 ## Usage
 
