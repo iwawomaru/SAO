@@ -121,15 +121,22 @@ class GALearner(PropRule):
             self.components["learner_set"].f_go = True
             self.components["learner_set"].set_default_prop(name=self.prop)
 
+        action_dict = {}
+        for n in self.name_list:
+            self.components["learner_set"].set_default_prop(name=n)
+            action_dict[n] = self.components["learner_set"](data)
+        self.components["learner_set"].set_default_prop(name=self.prop)
+        #res = self.components["learner_set"](data)
+        res = action_dict[n]
+
         gene_id = self.eps % self.eps_period / self.eps_period
         self.evidence += self.sample_normal(gene_id, self.prop)
-        res = self.components["learner_set"](data)
 
         """ kashikoku shitai here """
         if self.evidence > self.threshold:
             self.components["learner_set"].f_go = False
             self.evidence = 0.
-            #print "accumulation"
+            print "accumulation"
         return res
 
     def sample_normal(self, gene_id, prop):
