@@ -46,8 +46,7 @@ class GymEnv(Environment):
             observation, reward, done, info = self.step(action)
             self.model.set_reward(reward) # does model should have history of reward? environment is better?
             episode_reward += reward
-            c_state = self.return_state()
-            self.model.reinforcement_train(c_state,reward)
+            self.model.reinforcement_train()
             if done: break
 
         if not done:
