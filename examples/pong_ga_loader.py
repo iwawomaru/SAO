@@ -26,5 +26,6 @@ if __name__ == "__main__":
     env = Pong(model, render=True)
     for i in xrange(n_eps):
         env.execute()
-        #if i%(one_gen*2) == 0:
-            #model.save('gasb_'+str(i/one_gen)+'gen.pkl')
+        if i%(one_gen*2) == 0:
+            model.save('gasb_'+str(i/one_gen)+'gen.pkl')
+    model.save('gasb_'+str(n_gen)+'gen.pkl')
