@@ -108,3 +108,8 @@ class Circuit(Collection, Component):
         for r in self.rules.values():
             if r is not None:
                 r.set_reward(reward)
+
+    def reset(self):
+        for r in self.rules.values():
+            if r is not None:
+                r.reset()

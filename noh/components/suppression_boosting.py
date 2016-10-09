@@ -36,8 +36,8 @@ class LearnerSet(Circuit):
         component_list = [Random(n_input=n_stat, n_output=n_act)] + \
                          [Const(n_input=n_stat, n_output=n_act, const_output=n) for n in xrange(1, n_learner)]
 
-        #PropRulesDict = {"prop"+str(i): SimpleProp for i in xrange(n_learner)}
-        PropRulesDict = {"prop": EachProp}
+        PropRulesDict = {"prop"+str(i): SimpleProp for i in xrange(n_learner)}
+        #PropRulesDict = {"prop": EachProp}
 
         return LearnerSet(component_list, PropRulesDict)
 
@@ -51,24 +51,31 @@ class PropLearner(PropRule):
         super(PropLearner, self).__init__(components)
         self.reward = 0.
         self.evidence = 0.
-        self.mu = 0.1
-        self.sigma = 1.
+        self.mu = 0.
+        self.sigma = 2.
 
     def __call__(self, data):
         if not self.components["learner_set"].f_go:
+            self.prop = np.random.choice(self.name_list)
             self.components["learner_set"].f_go = True
-            self.components["learner_set"].set_default_prop(name=np.random.choice(self.name_list))
+            self.components["learner_set"].set_default_prop(name=self.prop)
 
         res = self.components["learner_set"](data)
+        self.evidence += self.reward * np.random.normal(self.mu, self.sigma)
 
         """ kashikoku shitai here """
         if self.evidence < self.threshold:
             self.components["learner_set"].f_go = False
-        return res[0]
+            self.evidence = 0.
+            print "accumulation"
+
+        return res
 
     def set_reward(self, reward):
         self.reward = reward
-        print reward
+
+    def reset(self):
+        self.evidence = 0.
 
 
 class SuppressionBoosting(Circuit):

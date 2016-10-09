@@ -34,6 +34,9 @@ class Component(object):
     def set_reward(self, reward):
         pass
 
+    def reset(self):
+        pass
+
     def save(self, filename):
         f = open(filename, 'w')
         pickle.dump(self, f)

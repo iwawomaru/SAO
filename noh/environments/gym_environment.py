@@ -36,7 +36,7 @@ class GymEnv(Environment):
     def execute(self, epochs=None):
         episode_reward = 0
 
-        observation = self.env.reset()
+        observation = self.reset()
         done = False
         reward = 0
 
@@ -96,6 +96,7 @@ class Pong(GymEnv):
         return self.prepro(observation), reward, done, info
 
     def reset(self):
+        self.model.reset()
         return self.prepro(self.env.reset())
 
 
