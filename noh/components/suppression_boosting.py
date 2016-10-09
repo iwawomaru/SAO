@@ -140,7 +140,7 @@ class GALearner(PropRule):
         if self.evidence > self.threshold:
             self.components["learner_set"].f_go = False
             self.evidence = 0.
-            print "accumulation"
+            #print "accumulation"
         return res
         
     def get_info(self, state, action, reward, observation, done, frame):
