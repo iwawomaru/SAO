@@ -60,7 +60,8 @@ class Collection(object):
     #     raise NotImplementedError("To be implemented")
 
     def __getattr__(self, key):
-        return self.__getitem__(key)
+        #return self.__getitem__(key)
+        return super(Collection, self).__getattr__(key)
 
 
 class PropRule(Collection):
@@ -102,7 +103,8 @@ class Circuit(Collection, Component):
         self.default_train = self.rules[name]
 
     def __getattr__(self, key):
-        return self.rules[key]
+        #return self.rules[key]
+        super(Circuit, self).__getattr__(key)
 
     def set_reward(self, reward):
         #print "called Circuit's set_reward"
