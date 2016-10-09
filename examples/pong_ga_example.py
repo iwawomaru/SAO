@@ -23,3 +23,4 @@ if __name__ == "__main__":
         env.execute()
         if i%(one_gen*20) == 0:
             model.save('gasb_const_'+str(i/one_gen)+'.pkl')
+    model.save('gasb_const_'+str(n_gen)+'.pkl')
