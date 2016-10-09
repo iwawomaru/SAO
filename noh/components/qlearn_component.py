@@ -81,5 +81,5 @@ class Qlearn(Component):
     def unsupervised_train(self, data=None, label=None, epochs=None, **kwargs): pass
 
     def reinforcement_train(self, state, reward, data=None, label=None, epochs=None, **kwargs):
-        selectedAction = return_action()
+        #selectedAction = return_action()
         self.learn(self.n_input, self.n_output, reward, state)

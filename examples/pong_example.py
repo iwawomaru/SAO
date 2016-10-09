@@ -10,6 +10,6 @@ n_act = Pong.n_act
 
 # model = Random(n_input=n_stat, n_output=n_act)
 model = Qlearn(n_input=n_stat, n_output=n_act)
-env = Pong(model, render=True)
+env = Pong(model, render=False)
 while True:
     env.execute()
