@@ -33,8 +33,8 @@ class LearnerSet(Circuit):
 
     @classmethod
     def create(cls, n_stat, n_act, n_learner):
-        component_list = [Random(n_input=n_stat, n_output=n_act)] + \
-                         [Const(n_input=n_stat, n_output=n_act, const_output=n) for n in xrange(1, n_learner)]
+        component_list = [DQN(n_output=n_act)] + \
+                         [Const(n_input=n_stat, n_output=n_act, const_output=n) for n in xrange(1, n_learner)] 
         PropRulesDict = {"prop"+str(i): SimpleProp for i in xrange(n_learner)}
         return LearnerSet(component_list, PropRulesDict)
 
@@ -120,7 +120,7 @@ class GALearner(PropRule):
             self.prop = np.random.choice(self.name_list)
             self.components["learner_set"].f_go = True
             self.components["learner_set"].set_default_prop(name=self.prop)
-
+        
         action_dict = {}
         for n in self.name_list:
             self.components["learner_set"].set_default_prop(name=n)
@@ -138,6 +138,14 @@ class GALearner(PropRule):
             self.evidence = 0.
             print "accumulation"
         return res
+        
+    def get_info(self, state, action, reward, observation, done, frame):
+        self.state = state
+        self.action = action
+        self.reward = reward
+        self.observation = observation
+        self.done = done
+        self.frame = frame
 
     def sample_normal(self, gene_id, prop):
         param = self.genes[gene_id][prop]
