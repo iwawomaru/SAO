@@ -259,7 +259,7 @@ class GASuppressionBoosting(Circuit):
         self.f_go = False
 
     @classmethod
-    def create(cls, n_stat, n_act, n_learner, n_gene, eps_period, mu_scale=0.6, sigma=0.001):
+    def create(cls, n_stat, n_act, n_learner, n_gene, eps_period, mu_scale=0.6, sigma=0.001, dqn=True):
         components = {"learner_set": LearnerSet.create(n_stat, n_act, n_learner),
                       "suppressor": None}
         GALearner.name_list = components["learner_set"].rules.keys()
