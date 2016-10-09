@@ -105,6 +105,7 @@ class Circuit(Collection, Component):
         return self.rules[key]
 
     def set_reward(self, reward):
+        #print "called Circuit's set_reward"
         self.reward = reward
         for r in self.rules.values():
             if r is not None:
