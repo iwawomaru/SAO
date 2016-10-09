@@ -54,7 +54,7 @@ class GeneSet(LearnerSet):
 class PropLearner(PropRule):
 
     name_list = []
-    threshold = -1.
+    threshold = 1.
     def __init__(self, components):
         super(PropLearner, self).__init__(components)
         self.reward = 0.
@@ -67,11 +67,11 @@ class PropLearner(PropRule):
             self.components["learner_set"].f_go = True
             self.components["learner_set"].set_default_prop(name=self.prop)
 
-        self.evidence += self.reward * self.sample_normal(self.prop)
+        self.evidence += self.sample_normal(self.prop)
         res = self.components["learner_set"](data)
 
         """ kashikoku shitai here """
-        if self.evidence < self.threshold:
+        if self.evidence > self.threshold:
             self.components["learner_set"].f_go = False
             self.evidence = 0.
             print "accumulation"
@@ -97,7 +97,7 @@ class GALearner(PropRule):
     n_gene = 5
     eps_period = 5
     mutation_rate = 0.1
-    threshold = -1.
+    threshold = 1.
     def __init__(self, components):
         super(GALearner, self).__init__(components)
         self.reward = 0.
@@ -114,11 +114,11 @@ class GALearner(PropRule):
             self.components["learner_set"].set_default_prop(name=self.prop)
 
         gene_id = self.eps % self.eps_period / self.eps_period
-        self.evidence += self.reward * self.sample_normal(gene_id, self.prop)
+        self.evidence += self.sample_normal(gene_id, self.prop)
         res = self.components["learner_set"](data)
 
         """ kashikoku shitai here """
-        if self.evidence < self.threshold:
+        if self.evidence > self.threshold:
             self.components["learner_set"].f_go = False
             self.evidence = 0.
             #print "accumulation"
@@ -170,6 +170,40 @@ class GALearner(PropRule):
             self.reward_sum_history = []
 
         self.eps += 1
+
+
+class GAConfidenceLearner(GALearner):
+
+    def __init__(self, components):
+        super(GAConfidenceLearner, self).__init__(components)
+        self.reward = 0.
+        self.reward_sum = 0.
+        self.reward_sum_history = []
+        self.evidence = 0.
+        self.eps = 0
+        self.genes = [{name: {'sigma':np.random.rand(), 'mu':np.random.rand()} for name in self.name_list} for i in xrange(self.n_gene)]
+
+    def __call__(self, data):
+        if not self.components["learner_set"].f_go:
+            self.prop = self.confidence_choice(self.name_list)
+            self.components["learner_set"].f_go = True
+            self.components["learner_set"].set_default_prop(name=self.prop)
+
+        gene_id = self.eps % self.eps_period / self.eps_period
+        self.evidence += self.reward * self.sample_normal(gene_id, self.prop)
+        res = self.components["learner_set"](data)
+
+        if self.evidence < self.threshold:
+            self.components["learner_set"].f_go = False
+            self.evidence = 0.
+        return res
+
+    def confidence_choice(self, name_list):
+        def softmax(x):
+            e_x = np.exp(x - np.max(x))
+            return e_x / e_x.sum()
+
+        confidence = 0.1
 
 
 class SuppressionBoosting(Circuit):
