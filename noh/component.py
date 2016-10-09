@@ -17,6 +17,7 @@ class Component(object):
 
     def __init__(self):
         self.rng = np.random.RandomState(123)
+        self.reward = 0.
 
     @abstractmethod
     def __call__(self, data, **kwargs):
@@ -32,7 +33,7 @@ class Component(object):
         warnings.warn("reinforcemnt_train will do nothing")
 
     def set_reward(self, reward):
-        pass
+        self.reward = reward
 
     def reset(self):
         pass
