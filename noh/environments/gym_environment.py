@@ -31,6 +31,8 @@ class GymEnv(Environment):
         """
         pass
 
+    def return_state(self):pass
+    
     def execute(self, epochs=None):
         episode_reward = 0
 
@@ -50,7 +52,9 @@ class GymEnv(Environment):
             self.model.set_reward(self.default_negative_reward)
             episode_reward += (-reward + self.default_negative_reward)
 
-        self.model.reinforcement_train()
+        c_state = self.return_state()
+        
+        self.model.reinforcement_train(c_state,reward)
         self.episode_number += 1
         print ('ep %d: game finished, reward: %f' %
                (self.episode_number, episode_reward))
@@ -74,6 +78,9 @@ class Pong(GymEnv):
     def __init__(self, model, render=False):
         super(Pong, self).__init__(model, "Pong-v0", render)
 
+    def return_state(self):
+        return self.n_stat
+        
     def prepro(self, observation):
         """ prepro 210x160x3 uint8 frame into 6400 (80x80) 1D float vector """
         I = observation
