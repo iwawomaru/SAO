@@ -2,6 +2,8 @@
 
 Shimada, Ashihara and Osawa Project
 
+![](https://github.com/iwawomaru/SAO/blob/master/osawa-abst.png)
+
 ## Usage
 
 ### examples/pong_example.py

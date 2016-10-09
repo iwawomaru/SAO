@@ -42,9 +42,11 @@ class GymEnv(Environment):
 
         for frame in xrange(self.__class__.episode_size):
             if self.render: self.print_stat()
+            state = observation
             action = self.model(observation)
             observation, reward, done, info = self.step(action)
             self.model.set_reward(reward) # does model should have history of reward? environment is better?
+            #self.model.get_info(state, action, reward, observation, done, frame)
             episode_reward += reward
             self.model.reinforcement_train()
             if done: break
@@ -95,7 +97,7 @@ class Pong(GymEnv):
         return self.prepro(observation), reward, done, info
 
     def reset(self):
-        self.model.reset()
+        #self.model.reset()
         return self.prepro(self.env.reset())
 
 
