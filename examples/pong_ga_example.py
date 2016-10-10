@@ -1,4 +1,4 @@
-import sys, os, argparse
+import sys, os, argparse, csv
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
 
 from noh.environments import Pong
@@ -16,6 +16,8 @@ if __name__ == "__main__":
     parser.add_argument('--dqn', action='store_true', default=False, help='DQN mode flag')
     args = parser.parse_args()
 
+    f = open('param_log.csv', 'a')
+
     n_stat = Pong.n_stat
     n_act = Pong.n_act
     n_learner = 4
@@ -26,7 +28,8 @@ if __name__ == "__main__":
 
     model = GASuppressionBoosting.create(n_stat, n_act, n_learner, args.genes, args.eps_period, args.mu_scale, args.sigma, dqn=args.dqn)
 
-    env = Pong(model, render=False)
+    #env = Pong(model, render=False)
+    env = Pong(model, render=True)
     for i in xrange(n_eps):
         env.execute()
         if i%(one_gen*20) == 0:
@@ -37,6 +40,10 @@ if __name__ == "__main__":
                     '_'+str(args.genes)+
                     '_'+str(args.eps_period)+
                     '_'+str(i/one_gen)+'.pkl')
+        if i%one_gen == 0:
+            for n in model.rules["ga_learner"].name_list:
+                gene = model.rules["ga_learner"].genes[0][n]
+                f.write(n+','+str(gene['mu']))
     model.save(args.prefix+
             '_'+isDqn+
             '_'+str(args.mu_scale)+
@@ -44,3 +51,5 @@ if __name__ == "__main__":
             '_'+str(args.genes)+
             '_'+str(args.eps_period)+
             '_'+str(i/one_gen)+'.pkl')
+
+    f.close()
