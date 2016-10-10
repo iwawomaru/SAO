@@ -1,6 +1,6 @@
 from noh import Circuit
 from noh.circuit import PropRule
-from noh.components import Random, Const, DQN
+from noh.components import Random, Const, DQN, NNW
 import numpy as np
 
 
@@ -37,7 +37,7 @@ class LearnerSet(Circuit):
             dqn = DQN(n_output=n_act)
         else:
             dqn = Random(n_input=n_stat, n_output=n_act)
-        component_list = [dqn] + \
+        component_list = [NNW(n_input=n_stat, n_output=n_act)] + \
                          [Const(n_input=n_stat, n_output=n_act, const_output=n) for n in xrange(1, n_learner)] 
         PropRulesDict = {"prop"+str(i): SimpleProp for i in xrange(n_learner)}
         return LearnerSet(component_list, PropRulesDict)
