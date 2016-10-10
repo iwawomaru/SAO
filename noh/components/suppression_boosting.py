@@ -32,8 +32,12 @@ class LearnerSet(Circuit):
         self.f_go = False
 
     @classmethod
-    def create(cls, n_stat, n_act, n_learner):
-        component_list = [DQN(n_output=n_act)] + \
+    def create(cls, n_stat, n_act, n_learner, dqn=True):
+        if dqn:
+            dqn = DQN(n_output=n_act)
+        else:
+            dqn = Random(n_input=n_stat, n_output=n_act)
+        component_list = [dqn] + \
                          [Const(n_input=n_stat, n_output=n_act, const_output=n) for n in xrange(1, n_learner)] 
         PropRulesDict = {"prop"+str(i): SimpleProp for i in xrange(n_learner)}
         return LearnerSet(component_list, PropRulesDict)
@@ -104,6 +108,8 @@ class GALearner(PropRule):
     n_gene = 5
     eps_period = 5
     mutation_rate = 0.05
+    sigma = 0.001
+    mu_scale = 0.6
     threshold = 1.
     def __init__(self, components):
         super(GALearner, self).__init__(components)
@@ -112,8 +118,7 @@ class GALearner(PropRule):
         self.reward_sum_history = []
         self.evidence = 0.
         self.eps = 0
-        #self.genes = [{name: {'sigma':np.random.rand(), 'mu':np.random.rand()} for name in self.name_list} for i in xrange(self.n_gene)]
-        self.genes = [{name: {'sigma':0.0001, 'mu':0.001*np.random.rand()} for name in self.name_list} for i in xrange(self.n_gene)]
+        self.genes = [{name: {'sigma':self.sigma, 'mu':self.mu_scale*np.random.rand()} for name in self.name_list} for i in xrange(self.n_gene)]
 
     def __call__(self, data):
         if not self.components["learner_set"].f_go:
@@ -126,7 +131,6 @@ class GALearner(PropRule):
             self.components["learner_set"].set_default_prop(name=n)
             action_dict[n] = self.components["learner_set"](data)
         self.components["learner_set"].set_default_prop(name=self.prop)
-        #res = self.components["learner_set"](data)
         res = action_dict[n]
 
         gene_id = self.eps % self.eps_period / self.eps_period
@@ -136,7 +140,7 @@ class GALearner(PropRule):
         if self.evidence > self.threshold:
             self.components["learner_set"].f_go = False
             self.evidence = 0.
-            print "accumulation"
+            #print "accumulation"
         return res
         
     def get_info(self, state, action, reward, observation, done, frame):
@@ -255,12 +259,14 @@ class GASuppressionBoosting(Circuit):
         self.f_go = False
 
     @classmethod
-    def create(cls, n_stat, n_act, n_learner, n_gene, eps_period):
+    def create(cls, n_stat, n_act, n_learner, n_gene, eps_period, mu_scale=0.6, sigma=0.001, dqn=True):
         components = {"learner_set": LearnerSet.create(n_stat, n_act, n_learner),
                       "suppressor": None}
         GALearner.name_list = components["learner_set"].rules.keys()
         GALearner.n_gene = n_gene
         GALearner.eps_period = eps_period
+        GALearner.mu_scale = mu_scale
+        GALearner.sigma = sigma
         return GASuppressionBoosting(components, {"ga_learner": GALearner})
 
     def stop(self):
