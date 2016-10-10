@@ -131,7 +131,7 @@ class GALearner(PropRule):
             self.components["learner_set"].set_default_prop(name=n)
             action_dict[n] = self.components["learner_set"](data)
         self.components["learner_set"].set_default_prop(name=self.prop)
-        res = action_dict[n]
+        res = action_dict[self.prop]
 
         gene_id = self.eps % self.eps_period / self.eps_period
         self.evidence += self.sample_normal(gene_id, self.prop)
