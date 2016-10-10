@@ -52,6 +52,7 @@ class DQN:
         self.learningRate = learningRate
         self.learnStart = learnStart
         self.explorationRate = INITIAL_EPSILON
+        self.initNetworks()
 
     def __call__(self,state):
         qvalues = self.getQValues(state)
