@@ -43,7 +43,7 @@ if __name__ == "__main__":
         if i%one_gen == 0:
             for n in model.rules["ga_learner"].name_list:
                 gene = model.rules["ga_learner"].genes[0][n]
-                f.write(n+','+str(gene['mu']))
+                f.write(n+','+str(gene['mu'])+'\n')
     model.save(args.prefix+
             '_'+isDqn+
             '_'+str(args.mu_scale)+
