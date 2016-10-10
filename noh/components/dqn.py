@@ -35,6 +35,7 @@ current_epoch = 0
 loadsim_seconds = 0
 minibatch_size = 1
 
+#class DQN(object):
 class DQN:
 
     

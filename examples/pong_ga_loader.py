@@ -20,7 +20,7 @@ if __name__ == "__main__":
     n_act = Pong.n_act
     n_learner = 4
     n_gen = 10
-    one_gen = n_gene * args.eps_period
+    one_gen = args.genes * args.eps_period
     n_eps = one_gen * n_gen
 
     n_stat = Pong.n_stat
@@ -32,6 +32,7 @@ if __name__ == "__main__":
     isDqn = 'dqn' if args.dqn else 'random'
 
     model = GASuppressionBoosting.create(n_stat, n_act, n_learner, args.genes, args.eps_period, args.mu_scale, args.sigma, dqn=args.dqn)
+    model.load(args.model)
 
     print "model parameter: "
     for n in model.rules["ga_learner"].name_list:
